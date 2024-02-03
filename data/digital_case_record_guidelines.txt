@@ -1,0 +1,78 @@
+Please do your best to fill out the case record during the chat and save regularly. You can always complete any remaining fields or add additional information after the chat ends. 
+Case Detail
+You can complete the following fields during the conversation. Fields that will auto-populate are marked with [brackets]. Note that “Case Status” should only be changed after the conversation has ended. 
+
+1.	Risk Level: Indicates the risk level that you have determined based on the Risk Assessment. This section does not need to be manually filled out, as it is also based off of the info from the RA section. This section can be used if the auto-populated Risk does not match the actual risk and needs to be manually updated for any reason.
+2.	[Risk]: This section will auto-populate based on your documentation of the Risk Assessment. If you notice a mismatch between your determination and the risk level that populates, you should check the Risk Assessment section below. 
+3.	Primary Issue: You can select the contact’s presenting issue from the dropdown list OR select other and fill in the “Other - Primary Issue” field below. 
+4.	Secondary Issue(s): Select or write in any secondary reasons that brought the contact to Trevor. 
+5.	[Case Origin]: Indicates how the contact is reaching out to Trevor: Phone, Chat or Text.
+
+ 
+
+
+Personal Information & Contact/Identifying Information
+Make sure to fill out these fields as you gather personal information from the contact in the first few minutes of the conversation: 
+
+●	First name
+●	Age: Age will determine the time limit of the conversation. If the contact does not disclose their age, mark this field as “0.”
+●	City
+●	State
+ 
+Reminder: All other fields should only be completed if the contact discloses relevant  information to you directly during the conversation. Detailed location information like “Residence type” and “School name” should be documented if collected.
+  
+
+ 
+
+Risk Assessment Documentation
+The Risk Assessment (RA) section reflects the “yes” and “no” paths of the Risk Assessment Decision Tree. You should complete the Risk Assessment section of the case record as you ask the contact the respective questions and save the case record as you go.
+
+If the youth answers “yes” to “Are you thinking of killing yourself?” then you will answer the questions in the left column (i.e., the “yes path”). If the youth answers “no,” you will answer the questions in the right column (i.e., the “no path.”). Do not fill out both columns. 
+
+Below are some tips for a well-documented RA:
+●	If the contact provides an ambiguous answer to an RA question (e.g. a contact responds “kinda” to an RA question), please attempt to clarify with the contact. Include any clarifying information gathered in the Additional Details sections of the RA box.
+●	For open-ended RA questions, enter the contact’s response.
+●	Sometimes information from the "yes" path will organically come up even if you are following the "no" path (particularly about past attempts). If you gather this information, it is fine to fill out the appropriate yes-path field - it will not mess up the Risk Assessment - and may be helpful down the road.
+
+ 
+Safety Planning
+●	Risk Level Re-Assessment 
+
+Fill this section out to reflect your conversation with the youth:
+●	If you did not complete a Risk Reassessment question (or did not need to), enter “Did not ask.”
+●	If you completed a Risk Reassessment question, enter the contact’s updated risk level resulting from the new information.
+●	On Call Consult
+●	Choose the appropriate drop-down menu to indicate whether the On-Call Consult was contacted during the conversation.
+Additional Information
+●	Conversion Therapy Mentioned
+●	Choose “yes” or “no” to indicate whether the contact mentioned conversion therapy.
+ 
+
+
+●	Brief Narrative Summary
+
+The Brief Narrative Summary should detail a general arc of your conversation with the contact and include a summary of the presenting issue, the emotional state of the contact, and any safety concern or support systems available to them.  A general outline of a brief narrative summary includes:
+
+●	Written in short paragraphs or list form.
+●	What brought the contact to Trevor today? (1 sentence)
+●	Details from the Risk Assessment - means, plan, and timeframe. (1 sentence)
+●	Summary of discussion during gathering information, including an explanation of any safety risks. (1 to 3 sentences) 
+●	Summary of coping strategies and safety plan discussed.
+●	Information about an after-conversation plan, if created.
+
+Reminder: Use they/them pronouns for all contacts unless they specifically tell you their pronouns. You may also use the contact’s name, or just “the contact” to refer to them in the third person.
+
+  
+General Tips
+●	Case records should be written to reflect the contact’s experiences as closely as possible. Refrain from speculation and personal interpretations of what they have shared with you. 
+●	Include any direct quotes from contact in “quotation marks.” 
+●	You may move your cursor over the "i" symbol to see tips about how to fill out that field. 
+●	Fill out and save frequently after the Risk Assessment, so that your Supervisor can see the most up to date information on risk level. Try to fill out as much of the case record as you can during the conversation. 
+●	Save often! But never use “Save and Close!”
+Conversation Time Limits
+In order to support a significant number of Contacts who experience a wide range of crises, conversation time limits are one way Crisis Intervention ensures Counselors can connect with each Contact in a timely manner. Keeping within these limits helps balance providing quality care with supporting as many Contacts as possible; part of that quality of care is the understanding that, in our capacity as short term crisis Counselors, giving more time does not necessarily yield better outcomes. Staying within the set time frames establishes healthy boundaries, allows us to provide consistent experiences for Contacts, and affirms our role as a short-term crisis service rather than long-term therapeutic provider.
+
+Conversation time limits are determined based on the age of the Contact and their Risk Level. Contacts under the age of 25 are defined as “in-demographic” and Contacts who are 25 years old or older are defined as “out-of-demographic”. Demographics are specifically tied to age, an individual's sexual orientation and/or gender identity (SOGI) do not indicate in- or out-of-demo. 
+
+●	REMINDER: Language and references to being "in-demo" or "out-of-demo" is for internal use only. Counselors should treat all Contacts the same during conversations, regardless of age. 
+
