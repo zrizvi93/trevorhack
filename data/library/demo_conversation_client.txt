@@ -10,3 +10,5 @@
 1:sure, im living in sugarland texas
 0:Here’s some suggestions: [suggestions]
 1:thx
+0:
+1:sorry im going to go now

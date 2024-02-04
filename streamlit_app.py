@@ -63,12 +63,12 @@ client_script = open("data/library/demo_conversation_client.txt", "r").readlines
 if st.session_state.messages[-1]["role"] != "assistant":
     time.sleep(2) 
     with st.chat_message("assistant"):
-        if name == "":
-            print("[prompt openai to check for client's name]")
-        response = "sorry"
         if st.session_state.script_idx < len(client_script):
             response = client_script[st.session_state.script_idx][2:]
-        st.session_state.script_idx += 2 
-        st.write(response)
-        message = {"role": "assistant", "content": response}
-        st.session_state.messages.append(message) # Add response to message history
+            st.session_state.script_idx += 2 
+            st.write(response)
+            message = {"role": "assistant", "content": response}
+            st.session_state.messages.append(message) # Add response to message history
+        else:
+            st.info("Contact has left the chat")
+        
