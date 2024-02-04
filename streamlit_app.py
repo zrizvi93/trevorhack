@@ -20,6 +20,9 @@ if 'custom_chat_input' not in st.session_state:
 if 'autopopulation' not in st.session_state:
     st.session_state.autopopulation = False
 
+if 'suggested_reply1' not in st.session_state:
+    st.session_state.suggested_reply1 = ""
+
 st.set_page_config(page_title="TrevorText, powered by LlamaIndex", page_icon="🦙", layout="wide", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
 st.title("Welcome to TrevorText, powered by LlamaIndex 💬🦙")
@@ -59,6 +62,7 @@ def get_counselor_resources(response) -> list:
         output = [key for key in output_dict.keys()]
     except Exception as e: # Hard-coded draft return
         print(str(e))
+        return output
     return output
 
 def get_modified_prompt(user_input) -> str:
@@ -183,15 +187,15 @@ with tab1:
 
         st.subheader("Suggested Reply")
         suggested_reply = ""
-        if st.session_state.messages[-1]["role"] != "assistant":
+        source_file_names = ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
+        if st.session_state.messages[-1]["role"] == "assistant":
             with st.spinner("Thinking..."):
                 suggested_reply = str(agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"])))
                 print("printing suggested replly")
                 print(suggested_reply)
                 st.session_state.suggested_reply1 = suggested_reply  # Store the suggested reply in the session state
                 st.info(suggested_reply)
-        
-        source_file_names = get_counselor_resources(suggested_reply)
+                source_file_names = get_counselor_resources(suggested_reply)
 
         # Add a button to populate the custom input field with the suggested reply
         if st.button("Use Suggested Reply", on_click=set_custom_chat_input):
