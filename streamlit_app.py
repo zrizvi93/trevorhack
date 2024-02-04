@@ -4,6 +4,11 @@ from llama_index.llms import OpenAI
 import openai
 from llama_index import SimpleDirectoryReader
 import time
+from llama_index.tools import FunctionTool
+from llama_index.llms import OpenAI
+from llama_index.agent import ReActAgent
+import helpers
+
 
 
 # Client conversation idx initialization
@@ -11,7 +16,7 @@ client_script = open("data/library/demo_conversation_client.txt", "r").readlines
 if 'script_idx' not in st.session_state:
     st.session_state.script_idx = 1
 
-st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaIndex", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
+st.set_page_config(page_title="TrevorText, powered by LlamaIndex", page_icon="🦙", layout="wide", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
 st.title("Welcome to TrevorText, powered by LlamaIndex 💬🦙")
 
@@ -20,11 +25,46 @@ def load_data():
     with st.spinner(text="Loading"):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert on the Streamlit Python library and your job is to answer technical questions. Assume that all questions are related to the Streamlit Python library. Keep your answers technical and based on facts – do not hallucinate features."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
+@st.cache_resource(show_spinner=False)
+def build_agent():
+    agent = ReActAgent.from_tools([escalate_tool, resource_tool], llm=OpenAI(model="gpt-4"), verbose=True)
+    return agent
+
+def escalate() -> None:
+    """Recognizes a high-risk statement from the mental health chatbot and escalates to the next level of management. High-risk is defined as a statement that suggests that the client has a plan, means, and intent to harm oneself or others (specific details on when, where, and how)."""
+    st.error("High risk detected. Please consider escalating immediately.", icon="🚨")
+    
+def get_resource_for_response(user_input) -> str:
+    """Recognizes a no, low- or medium-risk statement from the mental health chatbot, seeks resources to inform potential chat responses"""
+    # Should just return resources
+    response = st.session_state.query_engine.retrieve(user_input)
+    resources = [t.node.metadata["file_name"] for t in response]
+    content = [t.node.text for t in response]
+    result = dict(zip(resources, content))
+    return result
+
+def get_counselor_resources(response) -> list:
+    try:
+        raw_output = response.sources[0].raw_output
+        output_dict = dict(raw_output)
+        return [key for key in output_dict.keys()]
+    except Exception as e: # Hard-coded draft return
+        print(str(e))
+        return ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
+
+def get_modified_prompt(user_input) -> str:
+    return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'?
+    """
+
+escalate_tool = FunctionTool.from_defaults(fn=escalate)
+resource_tool = FunctionTool.from_defaults(fn=get_resource_for_response)
+
 index = load_data()
+agent = build_agent()
 
 tab1, tab2 = st.tabs(["Crisis Hotline Chat", "Case Form"])
 
@@ -34,7 +74,8 @@ with tab1:
     with col_a1:
         if "chat_engine" not in st.session_state.keys():   # Initialize the chat engine
             st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
-
+        if "query_engine" not in st.session_state.keys():
+            st.session_state.query_engine = index.as_query_engine(similarity_top_k=3, verbose=True)
         if "messages" not in st.session_state.keys(): # Initialize the chat messages history
             st.session_state.messages = [
                 {"role": "user", "content": "Hi, welcome to TrevorText. What's going on?"}
@@ -89,15 +130,23 @@ with tab1:
                 status.update(label="Case Form filled out! Please double check all values", state="complete", expanded=False)
 
 
-        if prompt := st.chat_input("Your question"):   # Prompt for user input and save to chat history
+        if prompt := st.chat_input("Your question"):
             st.session_state.messages.append({"role": "user", "content": prompt})
         
         with col_a2:
+            st.subheader("Contact Overview")
+            if len(st.session_state.messages) > 1:
+                st.write(helpers.CLIENT_SUMMARY)
+
             st.subheader("Suggested Reply")
-            st.info("Have you been feeling overwhelmed or hopeless?")
+            if st.session_state.messages[-1]["role"] == "assistant":
+                with st.spinner("Thinking..."):
+                    response = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"]))
+                    st.info(response.response)
+                    source_file_names = get_counselor_resources(response)
+
             st.subheader("Sources")
 
-            source_file_names = ["README.md", "HelloWorld.py", "GirlPowerPlusTarun.pdf"]
             source_links = []
             base_link = "https://github.com/zrizvi93/trevorhack/tree/main/data/{}"
             for file in source_file_names:
