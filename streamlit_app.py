@@ -97,37 +97,37 @@ with tab1:
                     st.session_state.messages.append(message) # Add response to message history
                 else:
                     st.info("Contact has left the chat")
-            with st.status("Autopoulating form...", expanded=True) as status:
-                st.write("Downloading chat history...")
-                chathistory = ""
-                for item in st.session_state.messages:
-                    chathistory += item['content'] + '\n'
-                print(chathistory)
-                time.sleep(1) 
-                st.write("Analyzing chat...")
-                # 2. query openai for form details
-                time.sleep(1) 
-                st.write("Populating form...")
-                # 3. fill out form
+                    with st.status("Autopoulating form...", expanded=True) as status:
+                        st.write("Downloading chat history...")
+                        chathistory = ""
+                        for item in st.session_state.messages:
+                            chathistory += item['content'] + '\n'
+                        print(chathistory)
+                        time.sleep(1) 
+                        st.write("Analyzing chat...")
+                        # 2. query openai for form details
+                        time.sleep(1) 
+                        st.write("Populating form...")
+                        # 3. fill out form
 
-                # case form tab - HARDCODED
-                with tab2:
-                    col_b1, col_b2 = st.columns([0.5, 0.5], gap="small")
-                    with col_b1:
-                        with st.container(height=190):
-                            name = st.text_input("First Name", value="Kris")
-                            primary_issue = st.text_input("Primary Issue", value="Coming out to parents")
-                    with col_b2:
-                        with st.container(height=570):
-                            age = st.number_input("Age", value=24)
-                            city = st.text_input("City", value="Sugarland")
-                            state = st.text_input("State", value="TX")
-                            imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"], index=0)
-                            summary = st.text_area("Brief summary/ Narrative", value="Anxiety around coming out to parents. Needs LGBTQ guidance and support")
-                            risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=0)
+                        # case form tab - HARDCODED
+                        with tab2:
+                            col_b1, col_b2 = st.columns([0.5, 0.5], gap="small")
+                            with col_b1:
+                                with st.container(height=190):
+                                    name = st.text_input("First Name", value="Kris")
+                                    primary_issue = st.text_input("Primary Issue", value="Coming out to parents")
+                            with col_b2:
+                                with st.container(height=570):
+                                    age = st.number_input("Age", value=24)
+                                    city = st.text_input("City", value="Sugarland")
+                                    state = st.text_input("State", value="TX")
+                                    imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"], index=0)
+                                    summary = st.text_area("Brief summary/ Narrative", value="Anxiety around coming out to parents. Needs LGBTQ guidance and support")
+                                    risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=0)
 
-                time.sleep(1) 
-                status.update(label="Case Form filled out! Please double check all values", state="complete", expanded=False)
+                        time.sleep(1) 
+                        status.update(label="Case Form filled out! Please double check all values", state="complete", expanded=False)
 
 
         if prompt := st.chat_input("Your question"):
@@ -139,25 +139,27 @@ with tab1:
                 st.write(helpers.CLIENT_SUMMARY)
 
             st.subheader("Suggested Reply")
+            source_file_names = ["README.md", "HelloWorld.py", "GirlPowerPlusTarun.pdf"]
             if st.session_state.messages[-1]["role"] == "assistant":
                 with st.spinner("Thinking..."):
                     response = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"]))
                     st.info(response.response)
                     source_file_names = get_counselor_resources(response)
 
-            st.subheader("Sources")
+            if len(source_file_names) > 0:
+                st.subheader("Sources")
 
-            source_links = []
-            base_link = "https://github.com/zrizvi93/trevorhack/tree/main/data/{}"
-            for file in source_file_names:
-                source_links.append(base_link.format(file))
+                source_links = []
+                base_link = "https://github.com/zrizvi93/trevorhack/tree/main/data/{}"
+                for file in source_file_names:
+                    source_links.append(base_link.format(file))
 
-            i = 0
-            sources_row = st.columns(3)
-            for col in sources_row:
-                with col.container(height=50):
-                    st.markdown(f'<a href="{source_links[i]}" target="_blank">"{source_file_names[i]}"</a>', unsafe_allow_html=True)
-                i += 1
+                i = 0
+                sources_row = st.columns(3)
+                for col in sources_row:
+                    with col.container(height=50):
+                        st.markdown(f'<a href="{source_links[i]}" target="_blank">"{source_file_names[i]}"</a>', unsafe_allow_html=True)
+                    i += 1
 
             st.subheader("Additional Research")
             st.write('''
