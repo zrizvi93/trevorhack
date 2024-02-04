@@ -105,8 +105,9 @@ with tab1:
         
         with col_a2:
             st.subheader("Contact Overview")
-            st.write(helpers.CLIENT_SUMMARY)
-            
+            if len(st.session_state.messages) > 1:
+                st.write(helpers.CLIENT_SUMMARY)
+
             st.subheader("Suggested Reply")
             if st.session_state.messages[-1]["role"] == "assistant":
                 with st.spinner("Thinking..."):
