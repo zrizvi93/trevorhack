@@ -1,0 +1,75 @@
+Partially Disclosed Plans Cheat Sheet
+The RA questions are designed to ensure Counselors obtain consistent information about a Contact’s plan, means, and timeframe in order to assess their risk for suicide per our RA. Though Counselors are trained to ask the RA questions following the order using the wording as written, it is possible that a Contact may share information about their plan for suicide prior to beginning the RA or prior to a particular question being asked during the RA. These are called partially disclosed plans.  If that is the case, it is important to thoroughly clarify the plan, means, and/or timeframe they’ve shared and continue with the RA.
+
+In scenarios where a Contact shares all or some of their suicide plan prior to the Risk Assessment, it is important that Counselors reflect and clarify what the Contact has specifically shared to better understand the Contact’s plan while maintaining rapport. Counselors should use the RA questions as a guide or checklist to ensure they’ve sufficiently clarified the Contact’s plan. 
+
+Here are some examples in which the RA may need to be amended to successfully clarify the Contact’s suicide plan:
+Example 1
+Counselor: Are you thinking of killing yourself?
+
+Contact: Yeah
+
+Counselor: Thank you for sharing that with me. How are you thinking of killing yourself? 
+
+Contact: I’m thinking of hanging myself tonight.
+●	Note that the Contact shared their time frame without prompting. For now, the Counselor should continue the RA by asking appropriate follow-up questions.
+
+Counselor: How were you planning to hang yourself?
+
+Contact: I was planning to use a belt.
+
+Counselor: I appreciate you sharing that with me. Where is the belt right now? 
+
+Contact: It’s in my bedroom.
+
+Counselor: Okay. Where are you [chatting/texting/calling] me from right now?
+
+Contact: I’m at school.
+
+Counselor: Thanks, [name]. I want to check in on your safety - have you done anything today to try to kill yourself? 
+
+Contact: No.
+●	Because the Contact shared their timeframe (“tonight”) earlier on, it may damage rapport if the Counselor were to ask, “When are you thinking of killing yourself?”  Instead, the Counselor should clarify when tonight the Contact is planning to kill themselves. 
+
+Counselor: Okay, I just want to make sure I'm understanding you correctly. You have a plan to hang yourself with a belt, and you haven't done anything to act on that plan yet today, but you mentioned earlier that you’re thinking of doing it tonight. When tonight are you thinking of killing yourself?” 
+●	Upon receiving an answer that provides sufficient clarity,  the Counselor may proceed through the remaining RA questions, starting with “Where are you thinking of killing yourself?” 
+Example 2
+Counselor: TrevorLifeline, this is [alias]. What’s going on? 
+
+Contact: I want to kill myself tonight. I’m just going to overdose.
+
+●	The Counselor receives aspects of the Contact’s plan and timeframe prior to starting the RA. However, there is still a lack of information about the Contact’s specific means and how accessible those means are. Before completing the RA, work towards building rapport with the Contact and collecting standard demographic information (i.e., name, age, city/state).
+
+Counselor: It sounds like things are really difficult right now. I’m here to listen. What’s your name?
+
+●	Before you continue into a Risk Assessment, focus on gathering their name, age, and location, and completing the Establishing Rapport stage.
+
+Counselor: I'm really glad you reached out today. Earlier you mentioned  you want to overdose on something tonight, with the goal of killing yourself. Did I understand that correctly?
+
+Contact: Yes.
+
+●	To  complete the RA from this point, Counselors should ask follow-up questions on their plan to gather more specific information about their intended means and the accessibility of those means.
+○	“What are you planning to overdose on?”
+○	“Where are those pills now?” 
+●	Then move to the rest of the RA starting with: “Have you done anything today to try to kill yourself?”
+
+Risk Assessment Checklist
+As mentioned above, the Counselor’s goal should be to clarify any information they receive and ask appropriate follow-up questions such that they could sufficiently answer the RA questions as written. When parts of a plan have been shared, the Counselor can use the RA questions as a guide or checklist to ensure they’ve sufficiently clarified the Contact’s plan. Here is an example of how Counselors can use the RA as a guide for ensuring adequate information about the Contact’s plan has been gathered:
+
+●	Are you thinking of killing yourself?
+○	Has the Contact already shared that they want to kill themselves?
+●	How are you thinking of killing yourself?
+○	Has the Contact already shared their means (i.e. overdose, gun, etc.)?
+●	Where is/are the means right now?
+○	Has the Contact shared where the means are? 
+■	If so, the Counselor should follow up with any questions that ascertain whether the means are readily accessible, if unclear. 
+●	Have you done anything today to try to kill yourself?
+○	Has the Contact shared if they’ve done anything today to try to kill themselves? 
+●	When are you thinking of killing yourself?
+○	Has the Contact already shared when they want to kill themselves?
+■	If the timeframe seems vague or ambiguous, the Counselor should clarify using the following example language:
+●	“I want to make sure I’m understanding correctly - when exactly are you thinking of killing yourself?”
+●	“You mentioned that you were thinking of killing yourself tonight, do you have an idea of when tonight?"
+●	Where are you thinking of killing yourself?
+○	Has the Contact shared where they’re thinking of killing themselves?
+■	If so, the Counselor should follow up with any questions that ascertain whether that location is readily accessible or if the Contact is currently at/nearby that location, if unclear.
