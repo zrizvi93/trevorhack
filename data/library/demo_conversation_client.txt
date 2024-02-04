@@ -1,14 +1,12 @@
-0:Hi, welcome to TrevorText. What's going on?
-1:hi basically im feeling really anxious. im trying to come out to my parents but im worried how theyll react to me
-0:I can see how that could make you feel anxious. While we talk about that, could you tell us more about yourself?
+0:Hi, welcome to TrevorText. Can you tell me a little bit about yourself?
 1:my name is kris, i’m 24 and I’m chatting from houston, texas
+0:nice to meet you. what's going on?
+1:hi basically im feeling really anxious. im trying to come out to my parents but im worried how theyll react to me.
 0:Thanks for sharing all that with me, Kris. What kind of reaction are you afraid of them having?
-1:im afraid they wont accept me for who i am
+1:i don't know, id like to come out and be myself but im afraid they wont accept me for who i am
 0:Seems like you're gearing up for a pretty vulnerable conversation with your family, and you're not sure how they'll react. With everything that's going on, Kris, are you thinking of killing yourself?
-1:no but i need to come out to them soon and i dont know what to do
-0:I’m so sorry to about your situation. Would you like some resources local to you to help? 
-1:sure, im living in sugarland texas
+1:sure. i think a therapist could really help me. can you suggest some therapists in my area?
 0:Here’s some suggestions: [suggestions]
 1:thx
 0:
-1:sorry im going to go now
+1:im going to go now, bye

@@ -63,7 +63,7 @@ def search_for_therapists(locality: str = "Houston, Texas") -> str:
     agent = OpenAIAgent.from_tools(tools, verbose=True)
     response = agent.chat(f"what are the names of three specific therapists in {locality}?")
     message = emails.html(
-        html=f"<p>Hi Kris.<br>{response}</p>",
+        html=f"<p>Hi Riley.<br>{response}</p>",
         subject="Helpful resources from TrevorChat",
         mail_from=('TrevorChat Counselor', 'contact@mychesscamp.com')
     )
@@ -74,7 +74,7 @@ def search_for_therapists(locality: str = "Houston, Texas") -> str:
         "password": "Fiverkids123@@##$$",   
         "tls": True
     }
-    response = message.send(to='kris.rocks.socks@gmail.com', smtp=smtp_options)
+    response = message.send(to='Riley.rocks.socks@gmail.com', smtp=smtp_options)
     return response
 
 def get_counselor_resources(response) -> list:
@@ -89,7 +89,7 @@ def get_counselor_resources(response) -> list:
     return output
 
 def get_modified_prompt(user_input) -> str:
-    return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'?
+    return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'? Keep your responses limited to 4-5 lines; do not ask if the client needs more resources.
     """
 
 def send_chat_message():
@@ -129,7 +129,7 @@ with tab1:
 
         if "messages" not in st.session_state.keys():  # Initialize the chat messages history
             st.session_state.messages = [
-                {"role": "user", "content": "Hi, welcome to TrevorText. What's going on?"}
+                {"role": "user", "content": "Hi, welcome to TrevorText. Can you tell me a little bit about yourself?"}
             ]
 
         for message in st.session_state.messages:   # Display the prior chat messages
@@ -166,7 +166,7 @@ with tab1:
                         immenentriskBool = agent.chat(get_risk_value_from_convo(chathistory))
                         riskBool = agent.chat(get_risk_value_from_convo(chathistory))
                         
-                        # nameVal = "Kris"
+                        # nameVal = "Riley"
                         # issueVal = "Coming out to parents"
                         # ageVal = 24
                         # cityVal = "Sugarland"
@@ -205,9 +205,11 @@ with tab1:
                 submit_button = st.form_submit_button("Send :incoming_envelope:", on_click=send_chat_message)
 
     with col_a2:
-        st.subheader("Contact Overview")
+        st.subheader("Companion Suggestions")
         if len(st.session_state.messages) > 1:
-            st.write(helpers.CLIENT_SUMMARY)
+            with st.spinner("Loading..."):
+                time.sleep(2)
+                st.write(helpers.CLIENT_SUMMARY)
 
         st.subheader("Suggested Reply")
         suggested_reply = ""
