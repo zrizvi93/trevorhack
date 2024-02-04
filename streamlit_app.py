@@ -56,8 +56,38 @@ with tab1:
                     st.session_state.messages.append(message) # Add response to message history
                 else:
                     st.info("Contact has left the chat")
+            with st.status("Autopoulating form...", expanded=True) as status:
+                st.write("Downloading chat history...")
+                chathistory = ""
+                for item in st.session_state.messages:
+                    chathistory += item['content'] + '\n'
+                print(chathistory)
+                time.sleep(1) 
+                st.write("Analyzing chat...")
+                # 2. query openai for form details
+                time.sleep(1) 
+                st.write("Populating form...")
+                # 3. fill out form
 
-        print(st.session_state.messages)
+                # case form tab - HARDCODED
+                with tab2:
+                    col_b1, col_b2 = st.columns([0.5, 0.5], gap="small")
+                    with col_b1:
+                        with st.container(height=190):
+                            name = st.text_input("First Name", value="Kris")
+                            primary_issue = st.text_input("Primary Issue", value="Coming out to parents")
+                    with col_b2:
+                        with st.container(height=570):
+                            age = st.number_input("Age", value=24)
+                            city = st.text_input("City", value="Sugarland")
+                            state = st.text_input("State", value="TX")
+                            imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"], index=0)
+                            summary = st.text_area("Brief summary/ Narrative", value="Anxiety around coming out to parents. Needs LGBTQ guidance and support")
+                            risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=0)
+
+                time.sleep(1) 
+                status.update(label="Case Form filled out! Please double check all values", state="complete", expanded=False)
+
 
         if prompt := st.chat_input("Your question"):   # Prompt for user input and save to chat history
             st.session_state.messages.append({"role": "user", "content": prompt})
@@ -85,19 +115,3 @@ with tab1:
             <div style="width: 100%; padding-top: 70%; position: relative;">
                 <iframe src="https://www.perplexity.ai/" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
             </div>''', unsafe_allow_html=True)
-
-# case form tab
-with tab2:
-    col_b1, col_b2 = st.columns([0.5, 0.5], gap="small")
-    with col_b1:
-        with st.container(height=190):
-            name = st.text_input("First Name")
-            primary_issue = st.text_input("Primary Issue")
-    with col_b2:
-        with st.container(height=570):
-            age = st.number_input("Age", value=0)
-            city = st.text_input("City")
-            state = st.text_input("State")
-            imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"])
-            summary = st.text_area("Brief summary/ Narrative")
-            risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"])
