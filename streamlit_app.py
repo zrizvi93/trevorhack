@@ -10,12 +10,6 @@ from llama_index.agent import ReActAgent
 import helpers
 
 
-
-# Client conversation idx initialization
-client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
-if 'script_idx' not in st.session_state:
-    st.session_state.script_idx = 1
-
 st.set_page_config(page_title="TrevorText, powered by LlamaIndex", page_icon="🦙", layout="wide", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
 st.title("Welcome to TrevorText, powered by LlamaIndex 💬🦙")
@@ -37,7 +31,7 @@ def build_agent():
 def escalate() -> None:
     """Recognizes a high-risk statement from the mental health chatbot and escalates to the next level of management. High-risk is defined as a statement that suggests that the client has a plan, means, and intent to harm oneself or others (specific details on when, where, and how)."""
     st.error("High risk detected. Please consider escalating immediately.", icon="🚨")
-    
+
 def get_resource_for_response(user_input) -> str:
     """Recognizes a no, low- or medium-risk statement from the mental health chatbot, seeks resources to inform potential chat responses"""
     # Should just return resources
@@ -60,11 +54,32 @@ def get_modified_prompt(user_input) -> str:
     return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'?
     """
 
+def send_chat_message():
+    if st.session_state.custom_chat_input:  # Check if the input is not empty
+        st.session_state.messages.append({"role": "user", "content": st.session_state.custom_chat_input})
+        st.session_state.custom_chat_input = ""
+
+def set_custom_chat_input():
+    st.session_state.custom_chat_input = st.session_state.suggested_reply1
+
 escalate_tool = FunctionTool.from_defaults(fn=escalate)
 resource_tool = FunctionTool.from_defaults(fn=get_resource_for_response)
-
 index = load_data()
 agent = build_agent()
+
+# Client conversation idx initialization
+client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
+if 'script_idx' not in st.session_state:
+    st.session_state.script_idx = 1
+
+if "query_engine" not in st.session_state.keys():
+    st.session_state.query_engine = index.as_query_engine(similarity_top_k=3, verbose=True)
+
+if 'custom_chat_input' not in st.session_state:
+    st.session_state.custom_chat_input = ''  # Initialize it with an empty string
+
+# if 'suggested_reply1' not in st.session_state:
+#     st.session_state.suggested_reply1 = ''  # Initialize it with an empty string
 
 tab1, tab2 = st.tabs(["Crisis Hotline Chat", "Case Form"])
 
@@ -74,9 +89,8 @@ with tab1:
     with col_a1:
         if "chat_engine" not in st.session_state.keys():   # Initialize the chat engine
             st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
-        if "query_engine" not in st.session_state.keys():
-            st.session_state.query_engine = index.as_query_engine(similarity_top_k=3, verbose=True)
-        if "messages" not in st.session_state.keys(): # Initialize the chat messages history
+
+        if "messages" not in st.session_state.keys():  # Initialize the chat messages history
             st.session_state.messages = [
                 {"role": "user", "content": "Hi, welcome to TrevorText. What's going on?"}
         ]
@@ -87,14 +101,13 @@ with tab1:
 
         # If last message is not from assistant, generate a new response
         if st.session_state.messages[-1]["role"] != "assistant":
-            time.sleep(2) 
             with st.chat_message("assistant"):
                 if st.session_state.script_idx < len(client_script):
                     response = client_script[st.session_state.script_idx][2:]
-                    st.session_state.script_idx += 2 
+                    st.session_state.script_idx += 2
                     st.write(response)
                     message = {"role": "assistant", "content": response}
-                    st.session_state.messages.append(message) # Add response to message history
+                    st.session_state.messages.append(message)  # Add response to message history
                 else:
                     st.info("Contact has left the chat")
                     with st.status("Autopoulating form...", expanded=True) as status:
@@ -134,13 +147,16 @@ with tab1:
                                     summary = st.text_area("Brief summary/ Narrative", value=summaryVal)
                                     risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=riskBool)
 
-                        time.sleep(1) 
+                        # time.sleep(1) 
                         status.update(label="Case Form filled out! Please double check all values", state="complete", expanded=False)
 
+        # Send message in Chat
+        with st.form("chat_form"):
+            custom_chat_input = st.text_input("Your reply", key="custom_chat_input")
+            _, right_justified_button_col = st.columns([0.8, 0.15])   # Adjust the ratio as needed
+            with right_justified_button_col:
+                submit_button = st.form_submit_button("Send :incoming_envelope:", on_click=send_chat_message)
 
-        if prompt := st.chat_input("Your question"):
-            st.session_state.messages.append({"role": "user", "content": prompt})
-        
         with col_a2:
             st.subheader("Contact Overview")
             if len(st.session_state.messages) > 1:
@@ -149,11 +165,16 @@ with tab1:
             st.subheader("Suggested Reply")
             if st.session_state.messages[-1]["role"] != "assistant":
                 with st.spinner("Thinking..."):
-                    response = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"]))
-                    st.info(response.response)
-                    source_file_names = get_counselor_resources(response)
+                    suggested_reply1 = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"]))
+                    st.session_state.suggested_reply1 = suggested_reply1  # Store the suggested reply in the session state
+                    st.info(suggested_reply1)
+                    source_file_names = get_counselor_resources(suggested_reply1)
 
+            # Add a button to populate the custom input field with the suggested reply
+            if st.button("Use Suggested Reply", on_click=set_custom_chat_input):
+                pass
 
+            st.subheader("Sources")
             source_file_names = ["README.md", "HelloWorld.py", "GirlPowerPlusTarun.pdf"]
             if st.session_state.messages[-1]["role"] == "assistant":
                 with st.spinner("Thinking..."):

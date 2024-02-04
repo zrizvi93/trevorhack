@@ -1,3 +1,4 @@
 .streamlit/*
 .*
 /tests
+*__pycache__
