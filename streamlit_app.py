@@ -32,6 +32,9 @@ tab1, tab2 = st.tabs(["Crisis Hotline Chat", "Case Form"])
 with tab1:
     col_a1, col_a2 = st.columns([0.5, 0.5], gap="small")
     with col_a1:
+        if "chat_engine" not in st.session_state.keys():   # Initialize the chat engine
+            st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+
         if "messages" not in st.session_state.keys(): # Initialize the chat messages history
             st.session_state.messages = [
                 {"role": "user", "content": "Hi, welcome to TrevorText. What's going on?"}
@@ -40,11 +43,6 @@ with tab1:
         for message in st.session_state.messages:   # Display the prior chat messages
             with st.chat_message(message["role"]):
                 st.write(message["content"])
-    
-        if "chat_engine" not in st.session_state.keys():   # Initialize the chat engine
-            st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
-        if prompt := st.chat_input("Your question"):   # Prompt for user input and save to chat history
-            st.session_state.messages.append({"role": "user", "content": prompt})
 
         # If last message is not from assistant, generate a new response
         if st.session_state.messages[-1]["role"] != "assistant":
@@ -60,6 +58,9 @@ with tab1:
                     st.info("Contact has left the chat")
 
         print(st.session_state.messages)
+
+        if prompt := st.chat_input("Your question"):   # Prompt for user input and save to chat history
+            st.session_state.messages.append({"role": "user", "content": prompt})
         
         with col_a2:
             st.subheader("Suggested Reply")
@@ -85,3 +86,18 @@ with tab1:
                 <iframe src="https://www.perplexity.ai/" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
             </div>''', unsafe_allow_html=True)
 
+# case form tab
+with tab2:
+    col_b1, col_b2 = st.columns([0.5, 0.5], gap="small")
+    with col_b1:
+        with st.container(height=190):
+            name = st.text_input("First Name")
+            primary_issue = st.text_input("Primary Issue")
+    with col_b2:
+        with st.container(height=570):
+            age = st.number_input("Age", value=0)
+            city = st.text_input("City")
+            state = st.text_input("State")
+            imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"])
+            summary = st.text_area("Brief summary/ Narrative")
+            risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"])
