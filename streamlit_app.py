@@ -8,7 +8,7 @@ st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaInd
 openai.api_key = st.secrets.openai_key
 st.title("Chat with the Streamlit docs, powered by LlamaIndex 💬🦙")
 st.info("Check out the full tutorial to build this app in our [blog post](https://blog.streamlit.io/build-a-chatbot-with-custom-data-sources-powered-by-llamaindex/)", icon="📃")
-         
+
 if "messages" not in st.session_state.keys(): # Initialize the chat messages history
     st.session_state.messages = [
         {"role": "assistant", "content": "Ask me a question about Streamlit's open-source Python library!"}
@@ -25,11 +25,30 @@ def load_data():
 
 index = load_data()
 
-if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
-        st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+col1, col2, col3 = st.columns([0.4, 0.3, 0.3], gap="small")
 
-if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
+with col1:
+    if "chat_engine" not in st.session_state.keys():   # Initialize the chat engine
+        st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+    if prompt := st.chat_input("Your question"):   # Prompt for user input and save to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+with col2:
+    with st.container(height=570):
+        age = st.number_input("Age", value=0)
+        city = st.text_input("City")
+        state = st.text_input("State")
+        suicidal_bool = st.checkbox("Are they thinking of killing themselves?")
+        summary = st.text_area("Brief summary/ Narrative")
+        risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"])
+    st.subheader("Reply Suggestions")
+
+
+with col3:
+    with st.container(height=190):
+        name = st.text_input("First Name")
+        primary_issue = st.text_input("Primary Issue")
+
 
 for message in st.session_state.messages: # Display the prior chat messages
     with st.chat_message(message["role"]):
