@@ -7,7 +7,6 @@
 0:Seems like you're gearing up for a pretty vulnerable conversation with your family, and you're not sure how they'll react. With everything that's going on, Kris, are you thinking of killing yourself?
 1:no but i need to come out to them soon and i dont know what to do
 0:I’m so sorry to about your situation. Would you like some resources local to you to help? 
-here’s some suggestions
 1:sure, im living in sugarland texas
-0:[suggestions]
+0:Here’s some suggestions: [suggestions]
 1:thx

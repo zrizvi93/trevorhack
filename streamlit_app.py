@@ -53,7 +53,6 @@ with col3:
         name = st.text_input("First Name")
         primary_issue = st.text_input("Primary Issue")
 
-
 for message in st.session_state.messages: # Display the prior chat messages
     with st.chat_message(message["role"]):
         st.write(message["content"])
@@ -64,6 +63,8 @@ client_script = open("data/library/demo_conversation_client.txt", "r").readlines
 if st.session_state.messages[-1]["role"] != "assistant":
     time.sleep(2) 
     with st.chat_message("assistant"):
+        if name == "":
+            print("[prompt openai to check for client's name]")
         response = "sorry"
         if st.session_state.script_idx < len(client_script):
             response = client_script[st.session_state.script_idx][2:]
