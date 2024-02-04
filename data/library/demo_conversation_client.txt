@@ -9,4 +9,4 @@
 0:Here’s some suggestions: [suggestions]
 1:thx
 0:
-1:im going to go now, bye
+1:sorry im going to go now
