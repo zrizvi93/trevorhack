@@ -112,19 +112,27 @@ with tab1:
 
                         # case form tab - HARDCODED
                         with tab2:
+                            nameVal = "Kris"
+                            issueVal = "Coming out to parents"
+                            ageVal = 24
+                            cityVal = "Sugarland"
+                            stateval = "TX"
+                            riskBool = 0
+                            summaryVal = "Anxiety around coming out to parents. Needs LGBTQ guidance and support"
+                            riskBool = 0
                             col_b1, col_b2 = st.columns([0.5, 0.5], gap="small")
                             with col_b1:
                                 with st.container(height=190):
-                                    name = st.text_input("First Name", value="Kris")
-                                    primary_issue = st.text_input("Primary Issue", value="Coming out to parents")
+                                    name = st.text_input("First Name", value=nameVal)
+                                    primary_issue = st.text_input("Primary Issue", value=issueVal)
                             with col_b2:
                                 with st.container(height=570):
-                                    age = st.number_input("Age", value=24)
-                                    city = st.text_input("City", value="Sugarland")
-                                    state = st.text_input("State", value="TX")
-                                    imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"], index=0)
-                                    summary = st.text_area("Brief summary/ Narrative", value="Anxiety around coming out to parents. Needs LGBTQ guidance and support")
-                                    risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=0)
+                                    age = st.number_input("Age", value=ageVal)
+                                    city = st.text_input("City", value=cityVal)
+                                    state = st.text_input("State", value=stateval)
+                                    imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"], index=riskBool)
+                                    summary = st.text_area("Brief summary/ Narrative", value=summaryVal)
+                                    risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=riskBool)
 
                         time.sleep(1) 
                         status.update(label="Case Form filled out! Please double check all values", state="complete", expanded=False)
@@ -139,6 +147,13 @@ with tab1:
                 st.write(helpers.CLIENT_SUMMARY)
 
             st.subheader("Suggested Reply")
+            if st.session_state.messages[-1]["role"] != "assistant":
+                with st.spinner("Thinking..."):
+                    response = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"]))
+                    st.info(response.response)
+                    source_file_names = get_counselor_resources(response)
+
+
             source_file_names = ["README.md", "HelloWorld.py", "GirlPowerPlusTarun.pdf"]
             if st.session_state.messages[-1]["role"] == "assistant":
                 with st.spinner("Thinking..."):
