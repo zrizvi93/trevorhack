@@ -4,14 +4,18 @@ from llama_index.llms import OpenAI
 import openai
 from llama_index import SimpleDirectoryReader
 
+# Client conversation idx initialization
+if 'script_idx' not in st.session_state:
+    st.session_state.script_idx = 1
+    
 st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaIndex", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
-st.title("Chat with the Streamlit docs, powered by LlamaIndex 💬🦙")
-st.info("Check out the full tutorial to build this app in our [blog post](https://blog.streamlit.io/build-a-chatbot-with-custom-data-sources-powered-by-llamaindex/)", icon="📃")
+st.title("TrevorText")
+# st.info("Check out the full tutorial to build this app in our [blog post](https://blog.streamlit.io/build-a-chatbot-with-custom-data-sources-powered-by-llamaindex/)", icon="📃")
 
 if "messages" not in st.session_state.keys(): # Initialize the chat messages history
     st.session_state.messages = [
-        {"role": "assistant", "content": "Ask me a question about Streamlit's open-source Python library!"}
+        {"role": "user", "content": "Hi, welcome to TrevorText. What's going on?"}
     ]
 
 @st.cache_resource(show_spinner=False)
@@ -54,11 +58,15 @@ for message in st.session_state.messages: # Display the prior chat messages
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
+client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
+
 # If last message is not from assistant, generate a new response
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            response = st.session_state.chat_engine.chat(prompt)
-            st.write(response.response)
-            message = {"role": "assistant", "content": response.response}
-            st.session_state.messages.append(message) # Add response to message history
+        response = "sorry"
+        if st.session_state.script_idx < len(client_script):
+            response = client_script[st.session_state.script_idx][2:]
+        st.session_state.script_idx += 2 
+        st.write(response)
+        message = {"role": "assistant", "content": response}
+        st.session_state.messages.append(message) # Add response to message history
