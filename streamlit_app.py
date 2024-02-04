@@ -1,13 +1,16 @@
 import streamlit as st
-from llama_index import VectorStoreIndex, ServiceContext, Document
+from llama_index import VectorStoreIndex, ServiceContext
 from llama_index.llms import OpenAI
 import openai
 from llama_index import SimpleDirectoryReader
 import time
 from llama_index.tools import FunctionTool
-from llama_index.llms import OpenAI
 from llama_index.agent import ReActAgent
+from llama_index.agent import OpenAIAgent
 import helpers
+from llama_index.tools.tool_spec.load_and_search.base import LoadAndSearchToolSpec
+from llama_hub.tools.google_search.base import GoogleSearchToolSpec
+import emails
 
 # Client conversation idx initialization
 client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
@@ -38,7 +41,7 @@ def load_data():
 
 @st.cache_resource(show_spinner=False)
 def build_agent():
-    agent = ReActAgent.from_tools([escalate_tool, resource_tool], llm=OpenAI(model="gpt-4"), verbose=True)
+    agent = ReActAgent.from_tools([search_tool, escalate_tool, resource_tool], llm=OpenAI(model="gpt-4"), verbose=True)
     return agent
 
 def escalate() -> None:
@@ -47,12 +50,32 @@ def escalate() -> None:
 
 def get_resource_for_response(user_input) -> str:
     """Recognizes a no, low- or medium-risk statement from the mental health chatbot, seeks resources to inform potential chat responses"""
-    # Should just return resources
     response = st.session_state.query_engine.retrieve(user_input)
     resources = [t.node.metadata["file_name"] for t in response]
     content = [t.node.text for t in response]
     result = dict(zip(resources, content))
     return result
+
+def search_for_therapists(locality: str = "Houston, Texas") -> str:
+    """Use the Google Search Tool but only specifically to find therapists in the client's area, then send email to update the client with the results."""
+    google_spec = GoogleSearchToolSpec(key=st.secrets.google_search_api_key, engine=st.secrets.google_search_engine)
+    tools = LoadAndSearchToolSpec.from_defaults(google_spec.to_tool_list()[0],).to_tool_list()
+    agent = OpenAIAgent.from_tools(tools, verbose=True)
+    response = agent.chat(f"what are the names of three specific therapists in {locality}?")
+    message = emails.html(
+        html=f"<p>Hi Kris.<br>{response}</p>",
+        subject="Helpful resources from TrevorChat",
+        mail_from=('TrevorChat Counselor', 'contact@mychesscamp.com')
+    )
+    smtp_options = {
+        "host": "smtp.gmail.com", 
+        "port": 587,
+        "user": "contact@mychesscamp.com",
+        "password": "Fiverkids123@@##$$",   
+        "tls": True
+    }
+    response = message.send(to='kris.rocks.socks@gmail.com', smtp=smtp_options)
+    return response
 
 def get_counselor_resources(response) -> list:
     output = ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
@@ -86,6 +109,7 @@ def get_int_value_from_convo(convo, form_value) -> str:
 def get_risk_value_from_convo(convo) -> str:
     return f"""You are a helpful assistant filling out a form. Reply 0 if the person does not seem at risk based on the conversation. {convo}"""
 
+search_tool = FunctionTool.from_defaults(fn=search_for_therapists)
 escalate_tool = FunctionTool.from_defaults(fn=escalate)
 resource_tool = FunctionTool.from_defaults(fn=get_resource_for_response)
 index = load_data()
@@ -188,14 +212,13 @@ with tab1:
         st.subheader("Suggested Reply")
         suggested_reply = ""
         source_file_names = ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
-        if st.session_state.messages[-1]["role"] == "assistant":
-            with st.spinner("Thinking..."):
-                suggested_reply = str(agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"])))
-                print("printing suggested replly")
-                print(suggested_reply)
-                st.session_state.suggested_reply1 = suggested_reply  # Store the suggested reply in the session state
-                st.info(suggested_reply)
-                source_file_names = get_counselor_resources(suggested_reply)
+        if st.session_state.messages[-1]["role"] == "assistant": 
+            response = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"])) 
+            suggested_reply = str(response)
+            suggested_reply = suggested_reply.split('"')[1] if '"' in suggested_reply else suggested_reply
+            st.session_state.suggested_reply1 = suggested_reply  # Store the suggested reply in the session state
+            st.info(suggested_reply)
+            source_file_names = get_counselor_resources(response)
 
         # Add a button to populate the custom input field with the suggested reply
         if st.button("Use Suggested Reply", on_click=set_custom_chat_input):
@@ -213,9 +236,3 @@ with tab1:
                 st.markdown(f'<a href="{source_links[i]}" target="_blank">"{source_file_names[i]}"</a>', unsafe_allow_html=True)
             i += 1
 
-
-        st.subheader("Additional Research")
-        st.write('''
-        <div style="width: 100%; padding-top: 70%; position: relative;">
-            <iframe src="https://www.perplexity.ai/" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-        </div>''', unsafe_allow_html=True)
