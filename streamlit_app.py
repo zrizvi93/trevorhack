@@ -27,13 +27,13 @@ def load_data():
     with st.spinner(text="Loading"):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo-1106", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
 @st.cache_resource(show_spinner=False)
 def build_agent():
-    agent = ReActAgent.from_tools([escalate_tool, resource_tool], llm=OpenAI(model="gpt-4"), verbose=True)
+    agent = ReActAgent.from_tools([escalate_tool, resource_tool], llm=OpenAI(model="gpt-3.5-turbo-1106"), verbose=True)
     return agent
 
 def escalate() -> None:
