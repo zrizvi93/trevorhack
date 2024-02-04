@@ -15,6 +15,8 @@ import helpers
 client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
 if 'script_idx' not in st.session_state:
     st.session_state.script_idx = 1
+if 'autopopulation' not in st.session_state:
+    st.session_state.autopopulation = False
 
 st.set_page_config(page_title="TrevorText, powered by LlamaIndex", page_icon="🦙", layout="wide", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
@@ -60,6 +62,15 @@ def get_modified_prompt(user_input) -> str:
     return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'?
     """
 
+def get_form_value_from_convo(convo, form_value) -> str:
+    return f"""You are a helpful assistant filling out a form. Extract the person's {form_value} from the following converstation in to input into the form. {convo}"""
+
+def get_int_value_from_convo(convo, form_value) -> str:
+    return f"""You are a helpful assistant filling out a form. Extract the person's {form_value} from the following converstation in to input into the form. {convo}"""
+
+def get_risk_value_from_convo(convo) -> str:
+    return f"""You are a helpful assistant filling out a form. Reply 0 if the person does not seem at risk based on the conversation. {convo}"""
+
 escalate_tool = FunctionTool.from_defaults(fn=escalate)
 resource_tool = FunctionTool.from_defaults(fn=get_resource_for_response)
 
@@ -95,7 +106,7 @@ with tab1:
                     st.write(response)
                     message = {"role": "assistant", "content": response}
                     st.session_state.messages.append(message) # Add response to message history
-                else:
+                elif not st.session_state.autopopulation:
                     st.info("Contact has left the chat")
                     with st.status("Autopoulating form...", expanded=True) as status:
                         st.write("Downloading chat history...")
@@ -106,20 +117,30 @@ with tab1:
                         time.sleep(1) 
                         st.write("Analyzing chat...")
                         # 2. query openai for form details
-                        time.sleep(1) 
+                        
+                        nameVal = agent.chat(get_form_value_from_convo(chathistory, "First Name"))
+                        issueVal = agent.chat(get_form_value_from_convo(chathistory, "Primary Issue"))
+                        ageVal = agent.chat(get_int_value_from_convo(chathistory, "Age"))
+                        cityVal = agent.chat(get_form_value_from_convo(chathistory, "City"))
+                        stateval = agent.chat(get_form_value_from_convo(chathistory, "State"))
+                        summaryVal = agent.chat(get_form_value_from_convo(chathistory, "Brief summary/ Narrative"))
+
+                        immenentriskBool = agent.chat(get_risk_value_from_convo(chathistory))
+                        riskBool = agent.chat(get_risk_value_from_convo(chathistory))
+                        
+                        # nameVal = "Kris"
+                        # issueVal = "Coming out to parents"
+                        # ageVal = 24
+                        # cityVal = "Sugarland"
+                        # stateval = "TX"
+                        # immenentriskBool = 0
+                        # summaryVal = "Anxiety around coming out to parents. Needs LGBTQ guidance and support"
+                        # riskBool = 0 
                         st.write("Populating form...")
                         # 3. fill out form
 
-                        # case form tab - HARDCODED
+                        # case form tab
                         with tab2:
-                            nameVal = "Kris"
-                            issueVal = "Coming out to parents"
-                            ageVal = 24
-                            cityVal = "Sugarland"
-                            stateval = "TX"
-                            riskBool = 0
-                            summaryVal = "Anxiety around coming out to parents. Needs LGBTQ guidance and support"
-                            riskBool = 0
                             col_b1, col_b2 = st.columns([0.5, 0.5], gap="small")
                             with col_b1:
                                 with st.container(height=190):
@@ -127,15 +148,16 @@ with tab1:
                                     primary_issue = st.text_input("Primary Issue", value=issueVal)
                             with col_b2:
                                 with st.container(height=570):
-                                    age = st.number_input("Age", value=ageVal)
+                                    age = st.number_input("Age", value=int(str(ageVal)))
                                     city = st.text_input("City", value=cityVal)
                                     state = st.text_input("State", value=stateval)
-                                    imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"], index=riskBool)
+                                    print("immenentriskBool", immenentriskBool)
+                                    imminent_risk_bool = st.selectbox("Are they thinking of killing themselves?", ["No", "Yes"], index=int(str(immenentriskBool)))
                                     summary = st.text_area("Brief summary/ Narrative", value=summaryVal)
-                                    risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=riskBool)
-
-                        time.sleep(1) 
+                                    print("riskBool", riskBool)
+                                    risk_level = st.selectbox("Risk Level", ["Not Suicidal", "Low Risk", "Medium Risk", "High Risk", "Imminent Risk"], index=int(str(riskBool)))
                         status.update(label="Case Form filled out! Please double check all values", state="complete", expanded=False)
+                        st.session_state.autopopulation = True
 
 
         if prompt := st.chat_input("Your question"):
