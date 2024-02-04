@@ -9,12 +9,14 @@ from llama_index.llms import OpenAI
 from llama_index.agent import ReActAgent
 import helpers
 
-
-
 # Client conversation idx initialization
 client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
 if 'script_idx' not in st.session_state:
     st.session_state.script_idx = 1
+
+if 'custom_chat_input' not in st.session_state:
+    st.session_state.custom_chat_input = ''  # Initialize it with an empty string
+
 if 'autopopulation' not in st.session_state:
     st.session_state.autopopulation = False
 
@@ -27,13 +29,13 @@ def load_data():
     with st.spinner(text="Loading"):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo-1106", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
 @st.cache_resource(show_spinner=False)
 def build_agent():
-    agent = ReActAgent.from_tools([escalate_tool, resource_tool], llm=OpenAI(model="gpt-3.5-turbo-1106"), verbose=True)
+    agent = ReActAgent.from_tools([escalate_tool, resource_tool], llm=OpenAI(model="gpt-4"), verbose=True)
     return agent
 
 def escalate() -> None:
@@ -50,13 +52,14 @@ def get_resource_for_response(user_input) -> str:
     return result
 
 def get_counselor_resources(response) -> list:
+    output = ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
     try:
         raw_output = response.sources[0].raw_output
         output_dict = dict(raw_output)
-        return [key for key in output_dict.keys()]
+        output = [key for key in output_dict.keys()]
     except Exception as e: # Hard-coded draft return
         print(str(e))
-        return ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
+    return output
 
 def get_modified_prompt(user_input) -> str:
     return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'?
@@ -84,16 +87,8 @@ resource_tool = FunctionTool.from_defaults(fn=get_resource_for_response)
 index = load_data()
 agent = build_agent()
 
-# Client conversation idx initialization
-client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
-if 'script_idx' not in st.session_state:
-    st.session_state.script_idx = 1
-
 if "query_engine" not in st.session_state.keys():
     st.session_state.query_engine = index.as_query_engine(similarity_top_k=3, verbose=True)
-
-if 'custom_chat_input' not in st.session_state:
-    st.session_state.custom_chat_input = ''  # Initialize it with an empty string
 
 tab1, tab2 = st.tabs(["Crisis Hotline Chat", "Case Form"])
 
@@ -107,7 +102,7 @@ with tab1:
         if "messages" not in st.session_state.keys():  # Initialize the chat messages history
             st.session_state.messages = [
                 {"role": "user", "content": "Hi, welcome to TrevorText. What's going on?"}
-        ]
+            ]
 
         for message in st.session_state.messages:   # Display the prior chat messages
             with st.chat_message(message["role"]):
@@ -132,8 +127,7 @@ with tab1:
                         print(chathistory)
                         time.sleep(1) 
                         st.write("Analyzing chat...")
-                        # 2. query openai for form details
-                        
+
                         nameVal = agent.chat(get_form_value_from_convo(chathistory, "First Name"))
                         issueVal = agent.chat(get_form_value_from_convo(chathistory, "Primary Issue"))
                         ageVal = agent.chat(get_int_value_from_convo(chathistory, "Age"))
@@ -177,7 +171,7 @@ with tab1:
 
         # Send message in Chat
         with st.form("chat_form"):
-            custom_chat_input = st.text_input("Your reply", key="custom_chat_input")
+            custom_chat_input = st.text_area("Your reply", key="custom_chat_input")
             _, right_justified_button_col = st.columns([0.8, 0.15])   # Adjust the ratio as needed
             with right_justified_button_col:
                 submit_button = st.form_submit_button("Send :incoming_envelope:", on_click=send_chat_message)
@@ -188,12 +182,16 @@ with tab1:
             st.write(helpers.CLIENT_SUMMARY)
 
         st.subheader("Suggested Reply")
-        if st.session_state.messages[-1]["role"] == "assistant":
+        suggested_reply = ""
+        if st.session_state.messages[-1]["role"] != "assistant":
             with st.spinner("Thinking..."):
-                suggested_reply1 = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"]))
-                st.session_state.suggested_reply1 = suggested_reply1  # Store the suggested reply in the session state
-                st.info(suggested_reply1)
-                source_file_names = get_counselor_resources(suggested_reply1)
+                suggested_reply = str(agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"])))
+                print("printing suggested replly")
+                print(suggested_reply)
+                st.session_state.suggested_reply1 = suggested_reply  # Store the suggested reply in the session state
+                st.info(suggested_reply)
+        
+        source_file_names = get_counselor_resources(suggested_reply)
 
         # Add a button to populate the custom input field with the suggested reply
         if st.button("Use Suggested Reply", on_click=set_custom_chat_input):
