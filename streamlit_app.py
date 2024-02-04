@@ -5,13 +5,15 @@ import openai
 from llama_index import SimpleDirectoryReader
 import time
 
+
 # Client conversation idx initialization
+client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
 if 'script_idx' not in st.session_state:
     st.session_state.script_idx = 1
 
 st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaIndex", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
-st.title("Welcome to TrevorText, powered by LlamaIndex 💬🦙⚠️")
+st.title("Welcome to TrevorText, powered by LlamaIndex 💬🦙")
 
 @st.cache_resource(show_spinner=False)
 def load_data():
@@ -32,8 +34,8 @@ with tab1:
     with col_a1:
         if "messages" not in st.session_state.keys(): # Initialize the chat messages history
             st.session_state.messages = [
-                {"role": "assistant", "content": "Ask me a question about Streamlit's open-source Python library!"}
-            ]
+                {"role": "user", "content": "Hi, welcome to TrevorText. What's going on?"}
+        ]
 
         for message in st.session_state.messages:   # Display the prior chat messages
             with st.chat_message(message["role"]):
@@ -46,12 +48,19 @@ with tab1:
 
         # If last message is not from assistant, generate a new response
         if st.session_state.messages[-1]["role"] != "assistant":
+            time.sleep(2) 
             with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
-                    response = st.session_state.chat_engine.chat(prompt)
-                    st.write(response.response)
-                    message = {"role": "assistant", "content": response.response}
-                    st.session_state.messages.append(message)  # Add response to message history
+                if st.session_state.script_idx < len(client_script):
+                    response = client_script[st.session_state.script_idx][2:]
+                    st.session_state.script_idx += 2 
+                    st.write(response)
+                    message = {"role": "assistant", "content": response}
+                    st.session_state.messages.append(message) # Add response to message history
+                else:
+                    st.info("Contact has left the chat")
+
+        print(st.session_state.messages)
+        
         with col_a2:
             st.subheader("Suggested Reply")
             st.info("Have you been feeling overwhelmed or hopeless?")
@@ -76,17 +85,3 @@ with tab1:
                 <iframe src="https://www.perplexity.ai/" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
             </div>''', unsafe_allow_html=True)
 
-    client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
-
-# If last message is not from assistant, generate a new response
-if st.session_state.messages[-1]["role"] != "assistant":
-    time.sleep(2) 
-    with st.chat_message("assistant"):
-        if st.session_state.script_idx < len(client_script):
-            response = client_script[st.session_state.script_idx][2:]
-            st.session_state.script_idx += 2 
-            st.write(response)
-            message = {"role": "assistant", "content": response}
-            st.session_state.messages.append(message) # Add response to message history
-        else:
-            st.info("Contact has left the chat")
