@@ -3,3 +3,5 @@ openai
 llama-index
 nltk
 pypdf
+llama-hub
+emails
