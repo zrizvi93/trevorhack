@@ -1,3 +1,4 @@
+# Prepopulated data. Can be parsed from real PDF profiles via LlamaParse
 CLIENT_SUMMARY = """Riley is a 24-year-old from Houston, Texas who had a session with us a week ago. They are not suicidal but are dealing with significant emotional distress. Riley is coming to terms with their sexual and gender identity, and is worried about how they will fit in with their traditional local community. This has also increased their anxiety about coming out to their parents, a step they wish to take but are apprehensive about. Riley enjoys painting and walking as coping mechanisms when they're feeling anxious or depressed. They have also expressed interest in joining TrevorSpace. Riley's current struggle is with feelings of loneliness and fear about their future, particularly concerning their identity and acceptance within their social and family circles.
-Source: https://drive.google.com/file/d/1W5qlU3SmtLkJ6-GHhzr900TWRlhxTNin/view
+Source: Redacted for organization's privacy
 """
