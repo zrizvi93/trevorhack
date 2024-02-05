@@ -61,7 +61,7 @@ def search_for_therapists(locality: str = "Houston, Texas") -> str:
     google_spec = GoogleSearchToolSpec(key=st.secrets.google_search_api_key, engine=st.secrets.google_search_engine)
     tools = LoadAndSearchToolSpec.from_defaults(google_spec.to_tool_list()[0],).to_tool_list()
     agent = OpenAIAgent.from_tools(tools, verbose=True)
-    response = agent.chat(f"what are the names of three specific therapists in {locality}?")
+    response = agent.chat(f"what are the names of three individual therapists in {locality}?")
     message = emails.html(
         html=f"<p>Hi Riley.<br>{response}</p>",
         subject="Helpful resources from TrevorChat",
@@ -74,7 +74,7 @@ def search_for_therapists(locality: str = "Houston, Texas") -> str:
         "password": "Fiverkids123@@##$$",   
         "tls": True
     }
-    response = message.send(to='Riley.rocks.socks@gmail.com', smtp=smtp_options)
+    response = message.send(to='kris.rocks.socks@gmail.com', smtp=smtp_options)
     return response
 
 def get_counselor_resources(response) -> list:
@@ -89,7 +89,7 @@ def get_counselor_resources(response) -> list:
     return output
 
 def get_modified_prompt(user_input) -> str:
-    return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'? Keep your responses limited to 4-5 lines; do not ask if the client needs more resources.
+    return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'? Keep your responses limited to 4-5 lines; do not ask if the client needs more resources. If you need to send an email to share therapist contacts, call that action.
     """
 
 def send_chat_message():
@@ -215,7 +215,10 @@ with tab1:
         suggested_reply = ""
         source_file_names = ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
         if st.session_state.messages[-1]["role"] == "assistant": 
-            response = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"])) 
+            try: 
+                response = agent.chat(get_modified_prompt(st.session_state.messages[-1]["content"])) 
+            except:
+                response = client_script[st.session_state.script_idx+1][2:]
             suggested_reply = str(response)
             suggested_reply = suggested_reply.split('"')[1] if '"' in suggested_reply else suggested_reply
             st.session_state.suggested_reply1 = suggested_reply  # Store the suggested reply in the session state

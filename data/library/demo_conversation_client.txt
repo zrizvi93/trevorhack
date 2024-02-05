@@ -1,12 +1,12 @@
 0:Hi, welcome to TrevorText. Can you tell me a little bit about yourself?
-1:my name is kris, i’m 24 and I’m chatting from houston, texas
+1:my name is riley, i’m 24 and I’m chatting from houston, texas
 0:nice to meet you. what's going on?
 1:hi basically im feeling really anxious. im trying to come out to my parents but im worried how theyll react to me.
-0:Thanks for sharing all that with me, Kris. What kind of reaction are you afraid of them having?
+0:Thanks for sharing all that with me, Riley. What kind of reaction are you afraid of them having?
 1:i don't know, id like to come out and be myself but im afraid they wont accept me for who i am
-0:Seems like you're gearing up for a pretty vulnerable conversation with your family, and you're not sure how they'll react. With everything that's going on, Kris, are you thinking of killing yourself?
+0:Seems like you're gearing up for a pretty vulnerable conversation with your family, and you're not sure how they'll react. With everything that's going on, Riley, do you think some resources, like having a good therapist, could help?
 1:sure. i think a therapist could really help me. can you suggest some therapists in my area?
-0:Here’s some suggestions: [suggestions]
+0:Tamara Denise Pena, Maria da Silva, Bryan Blakeny, and Jaleesia Rosemond are great therapists in Houston.
 1:thx
-0:
+0:you're welcome. Please come back to TrevorText whenever you need a listening ear.
 1:im going to go now, bye
