@@ -10,3 +10,4 @@
 1:thx
 0:you're welcome. Please come back to TrevorText whenever you need a listening ear.
 1:im going to go now, bye
+0:Take care, and see you next time.
