@@ -1,6 +1,6 @@
 # 🦙📚 TrevorText - Copilot-augmented
 
-Empower Trevor Project counselors with RAG-assisted TrevorText, an AI co-pilot powered by LlamaIndex to help counselors focus on people, not paperwork.
+Empower Trevor Project counselors with RAG-assisted TrevorText, an AI co-pilot powered by LlamaIndex to help counselors focus on people, not paperwork. Link to Hackathon Submission: https://devpost.com/software/counselor-copilot
 
 In this version, we artificially simulate the contact's responses. The extension would be to integrate the tool with the existing SalesForce CRM and webchat platform used by the Trevor Project.
 
