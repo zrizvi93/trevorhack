@@ -5,3 +5,6 @@ nltk
 pypdf
 llama-hub
 emails
+llama-index-vector-stores-astra
+astrapy
+python-dotenv
