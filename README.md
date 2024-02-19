@@ -21,6 +21,12 @@ Create secrets file
 openai_key = "XXXX"
 insert your API key for open ai / others like so
 
+Create environment variable file with: `touch .env` and add the following variables ([Reference](https://docs.datastax.com/en/astra/astra-db-vector/integrations/llamaindex.html))
+```
+ASTRA_DB_APPLICATION_TOKEN="TOKEN"
+ASTRA_DB_API_ENDPOINT="API_ENDPOINT"
+OPENAI_API_KEY="API_KEY"
+```
 
 `pip install -r requirements.txt`
 Install deps
