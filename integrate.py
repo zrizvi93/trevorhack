@@ -1,3 +1,5 @@
+#To test AstraDB Connection, run this file with the following command: python3 integrate.py
+
 import os
 
 from llama_index.vector_stores.astra import AstraDBVectorStore

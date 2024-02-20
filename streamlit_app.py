@@ -1,5 +1,7 @@
 import streamlit as st
 from llama_index import VectorStoreIndex, ServiceContext
+from llama_index.vector_stores.astra import AstraDBVectorStore
+from llama_index.core import StorageContext
 from llama_index.llms import OpenAI
 import openai
 from llama_index import SimpleDirectoryReader
@@ -11,6 +13,16 @@ import helpers
 from llama_index.tools.tool_spec.load_and_search.base import LoadAndSearchToolSpec
 from llama_hub.tools.google_search.base import GoogleSearchToolSpec
 import emails
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+ASTRA_DB_APPLICATION_TOKEN = os.environ.get("ASTRA_DB_APPLICATION_TOKEN")
+ASTRA_DB_API_ENDPOINT = os.environ.get("ASTRA_DB_API_ENDPOINT")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
 
 # Client conversation idx initialization
 client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
@@ -43,7 +55,14 @@ def load_data():
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
         service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
-        index = VectorStoreIndex.from_documents(docs, service_context=service_context)
+        astra_db_store = AstraDBVectorStore(
+            token=ASTRA_DB_APPLICATION_TOKEN,
+            api_endpoint=ASTRA_DB_API_ENDPOINT,
+            collection_name="test",
+            embedding_dimension=1536,
+        )
+        storage_context = StorageContext.from_defaults(vector_store=astra_db_store)
+        index = VectorStoreIndex.from_documents(docs, service_context=service_context, storage_context=storage_context)
         return index
 
 @st.cache_resource(show_spinner=False)

@@ -14,12 +14,6 @@ Use python version in .python-version file
 Create and activate virtual environment
 
 
-`mkdir .streamlit && cd .streamlit && touch secrets.toml`
-Create secrets file 
-
-
-openai_key = "XXXX"
-insert your API key for open ai / others like so
 
 Create environment variable file with: `touch .env` and add the following variables ([Reference](https://docs.datastax.com/en/astra/astra-db-vector/integrations/llamaindex.html))
 ```
