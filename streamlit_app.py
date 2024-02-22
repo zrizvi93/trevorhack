@@ -1,30 +1,17 @@
 import streamlit as st
-<<<<<<< Updated upstream
-from llama_index import VectorStoreIndex, ServiceContext
-from llama_index.vector_stores.astra import AstraDBVectorStore
-from llama_index.core import StorageContext
-from llama_index.llms import OpenAI
-=======
 from llama_index.core import  ServiceContext, StorageContext
 from llama_index.core import VectorStoreIndex
 from llama_index.llms.openai import OpenAI
 
->>>>>>> Stashed changes
 import openai
 from llama_index.vector_stores.astra import AstraDBVectorStore
 from llama_index.core import SimpleDirectoryReader
 import time
-<<<<<<< Updated upstream
-from llama_index.tools import FunctionTool
-from llama_index.agent import ReActAgent
-from llama_index.agent import OpenAIAgent
-=======
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
 from llama_index.agent.openai  import OpenAIAgent
 # from functools import lru_cache
 
->>>>>>> Stashed changes
 import helpers
 from llama_index.core.tools.tool_spec.load_and_search import (
     LoadAndSearchToolSpec,
@@ -32,19 +19,7 @@ from llama_index.core.tools.tool_spec.load_and_search import (
 from llama_hub.tools.google_search.base import GoogleSearchToolSpec
 import emails
 import os
-<<<<<<< Updated upstream
-
 from dotenv import load_dotenv
-
-load_dotenv()
-
-ASTRA_DB_APPLICATION_TOKEN = os.environ.get("ASTRA_DB_APPLICATION_TOKEN")
-ASTRA_DB_API_ENDPOINT = os.environ.get("ASTRA_DB_API_ENDPOINT")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-
-=======
-from dotenv import load_dotenv
->>>>>>> Stashed changes
 
 load_dotenv()
 
@@ -90,18 +65,7 @@ def load_data():
         storage_context = StorageContext.from_defaults(vector_store=astra_db_store)
 
         service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
-<<<<<<< Updated upstream
-        astra_db_store = AstraDBVectorStore(
-            token=ASTRA_DB_APPLICATION_TOKEN,
-            api_endpoint=ASTRA_DB_API_ENDPOINT,
-            collection_name="test",
-            embedding_dimension=1536,
-        )
-        storage_context = StorageContext.from_defaults(vector_store=astra_db_store)
-        index = VectorStoreIndex.from_documents(docs, service_context=service_context, storage_context=storage_context)
-=======
         index = VectorStoreIndex.from_documents(docs, storage_context=storage_context)
->>>>>>> Stashed changes
         return index
 
 @st.cache_resource(show_spinner=False)
