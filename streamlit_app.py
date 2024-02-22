@@ -7,6 +7,8 @@ import time
 from llama_index.tools import FunctionTool
 from llama_index.agent import ReActAgent
 from llama_index.agent import OpenAIAgent
+from functools import lru_cache
+
 import helpers
 from llama_index.tools.tool_spec.load_and_search.base import LoadAndSearchToolSpec
 from llama_hub.tools.google_search.base import GoogleSearchToolSpec
@@ -15,7 +17,7 @@ import emails
 # Client conversation idx initialization
 client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
 if 'openai_apikey' not in st.session_state:
-    st.session_state.openai_apikey = ''
+    st.session_state.openai_apikey = st.secrets.openai_key
 
 if 'script_idx' not in st.session_state:
     st.session_state.script_idx = 1
@@ -32,10 +34,8 @@ if 'suggested_reply1' not in st.session_state:
 st.set_page_config(page_title="TrevorText, powered by LlamaIndex", page_icon="🦙", layout="wide", initial_sidebar_state="auto", menu_items=None)
 st.title("Welcome to TrevorText, powered by LlamaIndex 💬🦙")
 
-if 'openai_apikey' not in st.session_state or not st.session_state.openai_apikey:
-    st.session_state.openai_apikey = st.text_input("Enter your OpenAI API Key", type="password")
-    if st.session_state.openai_apikey:
-        openai.api_key = st.session_state.openai_apikey
+if st.session_state.openai_apikey:
+    openai.api_key = st.session_state.openai_apikey
 
 @st.cache_resource(show_spinner=False)
 def load_data():
@@ -84,15 +84,20 @@ def search_for_therapists(locality: str = "Houston, Texas") -> str:
     response = message.send(to='contact.email@gmail.com', smtp=smtp_options) # To replace with client's email
     return f"Message sent: {response.success}"
 
-def get_counselor_resources(response) -> list:
+@st.cache_resource(show_spinner=False)
+def get_counselor_resources(_response) -> list:
     output = ['cheatsheet_empathetic_language.txt', 'cheatsheet_maintaining_rapport.txt', 'cheatsheet_risk_assessment.txt']
     try:
-        raw_output = response.sources[0].raw_output
+        raw_output = _response.sources[0].raw_output
         output_dict = dict(raw_output)
         output = [key for key in output_dict.keys()]
     except: # Hard-coded documents in case of agent failure
         return output
     return output
+
+@st.cache_resource(show_spinner=False)
+def client_summary() -> str:
+    return helpers.CLIENT_SUMMARY
 
 def get_modified_prompt(user_input) -> str:
     return f"""You are a helpful mental health assistant chatbot, helping to train a junior counselor by providing suggestions on responses to client chat inputs. What would you recommend that the consider could say if someone says or asks '{user_input}'? Keep your responses limited to 4-5 lines; do not ask if the client needs more resources. If the case is not high risk, check for resources to help inform your response. If you need to send an email to share therapist contacts, call that action.
@@ -201,11 +206,12 @@ if st.session_state.openai_apikey:
                     submit_button = st.form_submit_button("Send :incoming_envelope:", on_click=send_chat_message)
 
         with col_a2:
+              
             st.subheader("Companion Suggestions")
             if len(st.session_state.messages) > 1:
                 with st.spinner("Loading..."):
                     time.sleep(2)
-                    st.write(helpers.CLIENT_SUMMARY)
+                    st.write(client_summary())
 
             st.subheader("Suggested Reply")
             suggested_reply = ""
@@ -224,16 +230,3 @@ if st.session_state.openai_apikey:
             # Add a button to populate the custom input field with the suggested reply
             if st.button("Use Suggested Reply", on_click=set_custom_chat_input):
                 pass
-
-            st.subheader("Sources")
-            source_links = []
-            base_link = "https://github.com/zrizvi93/trevorhack/tree/main/data/{}"
-            for file in source_file_names:
-                source_links.append(base_link.format(file))
-            i = 0
-            sources_row = st.columns(3)
-            for col in sources_row:
-                with col.container(height=50):
-                    st.markdown(f'<a href="{source_links[i]}" target="_blank">"{source_file_names[i]}"</a>', unsafe_allow_html=True)
-                i += 1
-
