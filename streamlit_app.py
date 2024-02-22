@@ -145,6 +145,7 @@ if st.session_state.openai_apikey:
 
             # If last message is not from assistant, generate a new response
             if st.session_state.messages[-1]["role"] != "assistant":
+                time.sleep(2)
                 with st.chat_message("assistant"):
                     if st.session_state.script_idx < len(client_script):
                         response = client_script[st.session_state.script_idx][2:]
