@@ -1,19 +1,31 @@
 import streamlit as st
-from llama_index import VectorStoreIndex, ServiceContext
-from llama_index.llms import OpenAI
+from llama_index.core import  ServiceContext, StorageContext
+from llama_index.core import VectorStoreIndex
+from llama_index.llms.openai import OpenAI
+
 import openai
-from llama_index import SimpleDirectoryReader
+from llama_index.vector_stores.astra import AstraDBVectorStore
+from llama_index.core import SimpleDirectoryReader
 import time
-from llama_index.tools import FunctionTool
-from llama_index.agent import ReActAgent
-from llama_index.agent import OpenAIAgent
-from functools import lru_cache
+from llama_index.core.tools import FunctionTool
+from llama_index.core.agent import ReActAgent
+from llama_index.agent.openai  import OpenAIAgent
 
 import helpers
-from llama_index.tools.tool_spec.load_and_search.base import LoadAndSearchToolSpec
+from llama_index.core.tools.tool_spec.load_and_search import (
+    LoadAndSearchToolSpec,
+)
 from llama_hub.tools.google_search.base import GoogleSearchToolSpec
 import emails
+import emails
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+ASTRA_DB_APPLICATION_TOKEN = os.environ.get("ASTRA_DB_APPLICATION_TOKEN")
+ASTRA_DB_API_ENDPOINT = os.environ.get("ASTRA_DB_API_ENDPOINT")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 # Client conversation idx initialization
 client_script = open("data/library/demo_conversation_client.txt", "r").readlines()
 if 'openai_apikey' not in st.session_state:
@@ -42,8 +54,16 @@ def load_data():
     with st.spinner(text="Loading"):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
+        astra_db_store = AstraDBVectorStore(
+            token=ASTRA_DB_APPLICATION_TOKEN,
+            api_endpoint=ASTRA_DB_API_ENDPOINT,
+            collection_name="test_astraDB_v3",
+            embedding_dimension=1536,
+        )
+        storage_context = StorageContext.from_defaults(vector_store=astra_db_store)
+
         service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0, system_prompt="You are an expert and sensitive mental health copilot assistant for a mental health counselor. Your job is to help the counselor by providing suggestions based on reference documents."))
-        index = VectorStoreIndex.from_documents(docs, service_context=service_context)
+        index = VectorStoreIndex.from_documents(docs, storage_context=storage_context)
         return index
 
 @st.cache_resource(show_spinner=False)
@@ -230,3 +250,14 @@ if st.session_state.openai_apikey:
             # Add a button to populate the custom input field with the suggested reply
             if st.button("Use Suggested Reply", on_click=set_custom_chat_input):
                 pass
+            st.subheader("Sources")
+            source_links = []
+            base_link = "https://github.com/zrizvi93/trevorhack/tree/main/data/{}"
+            for file in source_file_names:
+                source_links.append(base_link.format(file))
+            i = 0
+            sources_row = st.columns(3)
+            for col in sources_row:
+                with col.container(height=50):
+                    st.markdown(f'<a href="{source_links[i]}" target="_blank">"{source_file_names[i]}"</a>', unsafe_allow_html=True)
+                i += 1
