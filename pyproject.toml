@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "trevorhack"
+version = "0.1.0"
+description = ""
+authors = ["zrizvi93 <zrizvi93@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.8.13"
+llama-index = "^0.10.28"
+astrapy = "^0.7.1"
+python-dotenv = "^1.0.1"
+llama-index-core = "^0.10.28"
+streamlit = "^1.33.0"
+openai = "^1.17.1"
+nltk = "^3.8.1"
+pypdf = "^4.2.0"
+llama-hub = "^0.0.79.post1"
+llama-index-vector-stores-astra = "^0.1.2"
+emails = "^0.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

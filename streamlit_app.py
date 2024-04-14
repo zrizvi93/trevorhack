@@ -1,25 +1,26 @@
 import streamlit as st
-from llama_index.core import  ServiceContext, StorageContext
-from llama_index.core import VectorStoreIndex
-from llama_index.llms.openai import OpenAI
-
 import openai
-from llama_index.vector_stores.astra import AstraDBVectorStore
-from llama_index.core import SimpleDirectoryReader
 import time
-from llama_index.core.tools import FunctionTool
-from llama_index.core.agent import ReActAgent
-from llama_index.agent.openai  import OpenAIAgent
-
 import helpers
-from llama_index.core.tools.tool_spec.load_and_search import (
-    LoadAndSearchToolSpec,
-)
-from llama_hub.tools.google_search.base import GoogleSearchToolSpec
-import emails
 import emails
 import os
 from dotenv import load_dotenv
+
+from llama_index.core import ServiceContext, StorageContext
+from llama_index.core import VectorStoreIndex
+from llama_index.core import SimpleDirectoryReader
+from llama_index.llms.openai import OpenAI
+
+from llama_index.core.tools import FunctionTool
+from llama_index.core.agent import ReActAgent
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.vector_stores.astra import AstraDBVectorStore
+
+from llama_index.core.tools.tool_spec.load_and_search import (
+    LoadAndSearchToolSpec,
+)
+# from llama_hub.tools.google_search.base import GoogleSearchToolSpec
+
 
 load_dotenv()
 
@@ -84,25 +85,26 @@ def get_resource_for_response(user_input) -> str:
     return result
 
 def search_for_therapists(locality: str = "Houston, Texas") -> str:
-    """Use the Google Search Tool but only specifically to find therapists in the client's area, then send email to update the client with the results."""
-    google_spec = GoogleSearchToolSpec(key=st.secrets.google_search_api_key, engine=st.secrets.google_search_engine)
-    tools = LoadAndSearchToolSpec.from_defaults(google_spec.to_tool_list()[0],).to_tool_list()
-    agent = OpenAIAgent.from_tools(tools, verbose=True)
-    response = agent.chat(f"what are the names of three individual therapists in {locality}?")
-    message = emails.html(
-        html=f"<p>Hi Riley.<br>{response}</p>",
-        subject="Helpful resources from TrevorChat",
-        mail_from=('TrevorChat Counselor', 'contact@mychesscamp.com')
-    )
-    smtp_options = {
-        "host": "smtp.gmail.com", 
-        "port": 587,
-        "user": "example@example.com", # To replace
-        "password": "mypassword", # To replace   
-        "tls": True
-    }
-    response = message.send(to='contact.email@gmail.com', smtp=smtp_options) # To replace with client's email
-    return f"Message sent: {response.success}"
+    pass
+    # """Use the Google Search Tool but only specifically to find therapists in the client's area, then send email to update the client with the results."""
+    # google_spec = GoogleSearchToolSpec(key=st.secrets.google_search_api_key, engine=st.secrets.google_search_engine)
+    # tools = LoadAndSearchToolSpec.from_defaults(google_spec.to_tool_list()[0],).to_tool_list()
+    # agent = OpenAIAgent.from_tools(tools, verbose=True)
+    # response = agent.chat(f"what are the names of three individual therapists in {locality}?")
+    # message = emails.html(
+    #     html=f"<p>Hi Riley.<br>{response}</p>",
+    #     subject="Helpful resources from TrevorChat",
+    #     mail_from=('TrevorChat Counselor', 'contact@mychesscamp.com')
+    # )
+    # smtp_options = {
+    #     "host": "smtp.gmail.com", 
+    #     "port": 587,
+    #     "user": "example@example.com", # To replace
+    #     "password": "mypassword", # To replace   
+    #     "tls": True
+    # }
+    # response = message.send(to='contact.email@gmail.com', smtp=smtp_options) # To replace with client's email
+    # return f"Message sent: {response.success}"
 
 @st.cache_resource(show_spinner=False)
 def get_counselor_resources(_response) -> list:

@@ -6,6 +6,8 @@ In this version, we artificially simulate the contact's responses. The extension
 
 ## Local Dev Loop
 
+Pre-req: ensure poetry is installed globally ([Reference](https://python-poetry.org/docs/))
+
 `pyenv local`
 Use python version in .python-version file
 
@@ -14,21 +16,15 @@ Use python version in .python-version file
 Create and activate virtual environment
 
 
-`mkdir .streamlit && cd .streamlit && touch secrets.toml`
-Create secrets file 
-
-
-openai_key = "XXXX"
-insert your API key for open ai / others like so
-
-Create environment variable file with: `touch .env` and add the following variables ([Reference](https://docs.datastax.com/en/astra/astra-db-vector/integrations/llamaindex.html))
+`touch .env` 
+From project root, create environment variable file and add the following variables ([Reference](https://docs.datastax.com/en/astra/astra-db-vector/integrations/llamaindex.html))
 ```
 ASTRA_DB_APPLICATION_TOKEN="TOKEN"
 ASTRA_DB_API_ENDPOINT="API_ENDPOINT"
 OPENAI_API_KEY="API_KEY"
 ```
 
-`pip install -r requirements.txt`
+`poetry install`
 Install deps
 
 

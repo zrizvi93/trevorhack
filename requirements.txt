@@ -1,6 +1,6 @@
+llama-index
 streamlit
 openai
-llama-index
 nltk
 pypdf
 llama-hub
